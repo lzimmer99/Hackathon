@@ -31,10 +31,6 @@ def main():
 
     df_content = pd.concat(temp_store)
 
-    # Store to csv
-    df_content.to_csv("cubes.csv")
-    df_cubes.to_csv("all_cubes.csv")
-
     # Match all Cube information into one dataframe
     df_content.drop("name", axis=1, inplace=True)
 
@@ -43,6 +39,9 @@ def main():
 
     df_merged = pd.merge(left=df_cubes, right=df_content, on="id")
 
+    # Store DataFrames to csv
+    df_content.to_csv("cubes.csv")
+    df_cubes.to_csv("all_cubes.csv")
     df_merged.to_csv("all_cube_info.csv")
 
     conn.close()

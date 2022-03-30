@@ -27,10 +27,12 @@ class MSTR(object):
         if RequestResponse.ok:
             AuthenticationToken = RequestResponse.headers['X-MSTR-AuthToken']
             Cookies = dict(RequestResponse.cookies)
+
             return AuthenticationToken, Cookies
 
         else:
             print('HTTP_REQUEST FAILED %s' % RequestResponse.status_code)
+
             pass
 
     def set_base_headers(self, authToken):
