@@ -1,7 +1,9 @@
 # Main File for MSTR_Hackthon
 import pandas as pd
+import numpy as np
 from classes import MSTR
 from mstrio.project_objects.datasets.cube import list_all_cubes
+from mstrio.project_objects.datasets import SuperCube
 
 
 def main():
@@ -38,15 +40,21 @@ def main():
                                df_content.columns[2]: "attributes"}, inplace=True)
 
     df_merged = pd.merge(left=df_cubes, right=df_content, on="id")
+    df_merged["attribute_count"] = df_merged['attributes'].str.len()
+    df_merged["metric_count"] = df_merged['metrics'].str.len()
 
-    # Store DataFrames to csv
-    df_content.to_csv("cubes.csv")
-    df_cubes.to_csv("all_cubes.csv")
-    df_merged.to_csv("all_cube_info.csv")
+    # Enable Status indication - default value zero for thresholding
+    df_merged["iServerCode"] = df_merged["iServerCode"].fillna(int(0))
+    df_merged["code"] = df_merged["code"].fillna(int(0))
+    df_merged["iServerCode"][7] = 1
+
+    # Load the Cube
+    ds = SuperCube(connection=conn, id="7716EA7DC146EA57D101DEB8C91F21FE")
+    ds.add_table(name="Governance_tbl", data_frame=df_merged, update_policy="replace")
+    ds.update()
 
     conn.close()
     pass
 
 
-if __name__ == '__main__':
-    main()
+main()
