@@ -50,22 +50,39 @@ def main():
 
     # Enable Status indication - default value zero for thresholding
     df_merged["iServerCode"] = df_merged["iServerCode"].fillna(int(0))
-    df_merged["code"] = df_merged["code"].fillna(int(0))
-    df_merged["iServerCode"][7] = 1
-    df_merged[["date_created", "date_modified"]] = df_merged[["date_created", "date_modified"]].apply(pd.to_datetime)
-    print(df_merged.dtypes)
+    df_merged["code"] = df_merged["code"].fillna("0")
+
+    #df_merged["iServerCode"][7] = 1
+
+    # Date Formatting
+    df_merged['date_created'] = df_merged['date_created'].str.replace('T', ' ')
+    df_merged['date_created'] = df_merged['date_created'].str.replace('+', ' ')
+
+    df_merged['date_modified'] = df_merged['date_modified'].str.replace('T', ' ')
+    df_merged['date_modified'] = df_merged['date_modified'].str.replace('+', ' ')
+
+    df_merged['date_created'] = df_merged.date_created.str.split('.').str[0]
+    df_merged['date_modified'] = df_merged.date_modified.str.split('.').str[0]
+
     print(df_merged.date_created)
+
+    # Initialize the cube
+    """
+    ds = SuperCube(connection=conn, name="MetaCube_v1")
+    ds.add_table(name="Governance_tbl", data_frame=df_merged, update_policy="replace")
+    ds.create(folder_id="516385C3B947626BC6A3588BA996F1A9"
+    """
 
     # Load the Cube
     ds = SuperCube(connection=conn,
-                   id="7716EA7DC146EA57D101DEB8C91F21FE")
+                   id="34A5A0D0144E21C69D62278870B6EA00")
 
     ds.add_table(name="Governance_tbl",
                  data_frame=df_merged,
-                 update_policy="replace")
+                 update_policy="REPLACE")
 
     ds.update()
-
+    
     conn.close()
     pass
 
