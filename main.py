@@ -1,4 +1,4 @@
-# Main File for MSTR_Hackthon
+# Main File for MSTR_Hackathon
 import pandas as pd
 from classes import MSTR
 from mstrio.project_objects.datasets.cube import list_all_cubes
@@ -20,12 +20,12 @@ def main():
 
     header = mstr.set_base_headers(authToken=authToken)
 
-    # Iterate trough all cubes
+    # Iterate through all cubes
     temp_store = []
-    for cubeid in cube_ids:
+    for cube_id in cube_ids:
         result = mstr.get_cube_information(header=header,
                                            cookies=cookies,
-                                           cube_id=cubeid)
+                                           cube_id=cube_id)
         json_obj = result.json()
         cube_df = pd.json_normalize(json_obj, max_level=4)
         temp_store.append(cube_df)
@@ -36,9 +36,15 @@ def main():
     df_content.drop("name", axis=1, inplace=True)
 
     df_content.rename(columns={df_content.columns[1]: "metrics",
-                               df_content.columns[2]: "attributes"}, inplace=True)
+                               df_content.columns[2]: "attributes"},
+                      inplace=True)
 
-    df_merged = pd.merge(left=df_cubes, right=df_content, on="id")
+    # Merge the Cube Data DF with metadata DF
+    df_merged = pd.merge(left=df_cubes,
+                         right=df_content,
+                         on="id")
+
+    # Calculate length of metric/attr-list in order to return obj count per row in df
     df_merged["attribute_count"] = df_merged['attributes'].str.len()
     df_merged["metric_count"] = df_merged['metrics'].str.len()
 
