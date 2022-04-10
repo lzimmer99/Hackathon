@@ -52,6 +52,9 @@ def main():
     df_merged["iServerCode"] = df_merged["iServerCode"].fillna(int(0))
     df_merged["code"] = df_merged["code"].fillna(int(0))
     df_merged["iServerCode"][7] = 1
+    df_merged[["date_created", "date_modified"]] = df_merged[["date_created", "date_modified"]].apply(pd.to_datetime)
+    print(df_merged.dtypes)
+    print(df_merged.date_created)
 
     # Load the Cube
     ds = SuperCube(connection=conn,
