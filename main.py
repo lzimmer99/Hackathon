@@ -1,6 +1,5 @@
 # Main File for MSTR_Hackthon
 import pandas as pd
-import numpy as np
 from classes import MSTR
 from mstrio.project_objects.datasets.cube import list_all_cubes
 from mstrio.project_objects.datasets import SuperCube
@@ -49,8 +48,13 @@ def main():
     df_merged["iServerCode"][7] = 1
 
     # Load the Cube
-    ds = SuperCube(connection=conn, id="7716EA7DC146EA57D101DEB8C91F21FE")
-    ds.add_table(name="Governance_tbl", data_frame=df_merged, update_policy="replace")
+    ds = SuperCube(connection=conn,
+                   id="7716EA7DC146EA57D101DEB8C91F21FE")
+
+    ds.add_table(name="Governance_tbl",
+                 data_frame=df_merged,
+                 update_policy="replace")
+
     ds.update()
 
     conn.close()
